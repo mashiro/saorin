@@ -13,7 +13,9 @@ module Saorin
           super handler, options
 
           ::Rack::Server.start({
-            :app => self
+            :app => self,
+            :Host => options[:host],
+            :Port => options[:port],
           }.merge(options))
         end
 
