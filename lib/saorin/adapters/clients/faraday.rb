@@ -17,7 +17,10 @@ module Saorin
         end
 
         def send_request(content)
-          response = @connection.post '', content
+          response = @connection.post do |req|
+            req.headers[:content_type] = CONTENT_TYPE
+            req.body = content
+          end
           response.body
         end
       end

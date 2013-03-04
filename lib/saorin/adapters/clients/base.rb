@@ -7,6 +7,8 @@ module Saorin
   module Adapters
     module Clients
       class Base
+        CONTENT_TYPE = 'application/json'.freeze
+
         def initialize(options = {})
         end
 
