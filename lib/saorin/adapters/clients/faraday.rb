@@ -12,6 +12,7 @@ module Saorin
 
           @connection = ::Faraday::Connection.new(options) do |builder|
             builder.adapter ::Faraday.default_adapter
+            builder.response :raise_error
             block.call builder if block
           end
         end
