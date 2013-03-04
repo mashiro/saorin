@@ -22,7 +22,7 @@ Or install it yourself as:
 ```ruby
 class Handler
   def hello(name)
-    "Helo #{name}!"
+    "Hello #{name}!"
   end 
 end
 
