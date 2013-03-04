@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Saorin::VERSION
   gem.authors       = ['mashiro']
   gem.email         = ['mail@mashiro.org']
-  gem.description   = %q{JSON-RPC 2.0 implementation for ruby}
-  gem.summary       = %q{JSON-RPC 2.0 implementation for ruby}
+  gem.description   = %q{JSON-RPC 2.0 implementation}
+  gem.summary       = %q{JSON-RPC 2.0 server and client implementation for any protocols}
   gem.homepage      = ''
 
   gem.files         = `git ls-files`.split($/)
