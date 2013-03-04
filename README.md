@@ -32,7 +32,7 @@ Saorin::Server.start Handler.new, :host => '0.0.0.0', :port => 8080
 ### Client
 ```ruby
 client = Saorin::Client.new :url => 'http://localhost:8080'
-client.call :hello, 'trape'
+client.call :hello, 'trape' #=> 'Hello trape!'
 ```
 
 ## Contributing
