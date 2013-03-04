@@ -7,7 +7,7 @@ module Saorin
       class Reel < Base
         DEFAULT_HEADERS = {
           'Content-Type' => 'application/json'
-        }
+        }.freeze
 
         def initialize(handler, options = {}, &block)
           super handler, options
@@ -23,7 +23,7 @@ module Saorin
             when ::Reel::Request
               response_body = ''
               response_body = process_request(request.body) if request.method.to_s.upcase == 'POST'
-              request.respond ::Reel::Response.new(200, DEFAULT_HEADERS, response_body)
+              request.respond :ok, DEFAULT_HEADERS.dup, response_body
             end
           end
         end
