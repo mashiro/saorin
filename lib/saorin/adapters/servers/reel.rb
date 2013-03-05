@@ -9,12 +9,14 @@ module Saorin
           'Content-Type' => 'application/json'
         }.freeze
 
+        attr_reader :server
+
         def initialize(handler, options = {}, &block)
           super handler, options
 
-          server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
-          trap(:INT) { server.terminate; exit }
-          sleep
+          @server = ::Reel::Server.supervise(options[:host], options[:port], &method(:process))
+          trap(:INT) { @server.terminate; exit }
+          sleep unless options[:nonblock]
         end
 
         def process(connection)
