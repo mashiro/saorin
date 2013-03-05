@@ -18,7 +18,7 @@ module Saorin
     end
 
     def valid?
-      return false unless (@result || @error) && !(@result && @error)
+      return false unless !(@result && @error)
       return false unless [String].any? { |type| @version.is_a? type }
       return false unless [String, NilClass].any? { |type| @result.is_a? type }
       return false unless [Saorin::Error, Hash, NilClass].any? { |type| @error.is_a? type }
