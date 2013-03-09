@@ -9,12 +9,12 @@ describe Saorin::Response do
       :id => rand(1 << 31),
     }
     options = default_options.merge(options)
-    Saorin::Response.new *options.values_at(:result, :error, :id, :version)
+    Saorin::Response.new options
   end
 
   describe '#initialize' do
     context 'success' do
-      before { @r = create_response :result => '123', :error => nil, :id => 123 }
+      before { @r = Saorin::Response.new :result => '123', :id => 123 }
       subject { @r }
       its(:version) { should eq Saorin::JSON_RPC_VERSION }
       its(:result) { should eq '123' }
@@ -23,10 +23,10 @@ describe Saorin::Response do
       its(:error?) { should be_false }
     end
 
-    context 'fail' do
+    context 'error' do
       before do
         @e = Saorin::InvalidRequest.new
-        @r = create_response :result => nil, :error => @e, :id => 123
+        @r = Saorin::Response.new :error => @e, :id => 123
       end
       subject { @r }
       its(:version) { should eq Saorin::JSON_RPC_VERSION }
@@ -44,21 +44,28 @@ describe Saorin::Response do
       create_response(:version => 2).should_not be_valid
     end
 
-    it 'result / error' do
-      create_response(:error => nil, :result => 123).should_not be_valid
-      create_response(:error => nil, :result => '123').should be_valid
-      create_response(:error => nil, :result => []).should_not be_valid
-      create_response(:error => nil, :result => {}).should_not be_valid
+    context 'result' do
+      def create_success_response(result)
+        create_response(:result => result, :error => nil)
+      end
 
-      create_response(:result => nil, :error => 123).should_not be_valid
-      create_response(:result => nil, :error => '123').should_not be_valid
-      create_response(:result => nil, :error => nil).should_not be_valid
-      create_response(:result => nil, :error => []).should_not be_valid
-      create_response(:result => nil, :error => {}).should be_valid
-      create_response(:result => nil, :error => Saorin::InvalidResponse.new).should be_valid
+      it('number') { create_success_response(123).should be_valid }
+      it('string') { create_success_response('123').should be_valid }
+      it('nil') { create_success_response(nil).should be_valid }
+      it('array') { create_success_response([]).should be_valid }
+      it('hash') { create_success_response({}).should be_valid }
+    end
 
-      create_response(:error => nil, :result => nil).should_not be_valid
-      create_response(:error => 123, :result => 123).should_not be_valid
+    context 'error' do
+      def create_fail_response(error)
+        create_response(:result => nil, :error => error)
+      end
+
+      it('number') { create_fail_response(123).should_not be_valid }
+      it('string') { create_fail_response('123').should_not be_valid }
+      it('array') { create_fail_response([]).should_not be_valid }
+      it('hash') { create_fail_response({}).should be_valid }
+      it('exception') { create_fail_response(Saorin::InvalidResponse.new).should be_valid }
     end
 
     it 'id' do
@@ -95,7 +102,7 @@ describe Saorin::Response do
       h.should_not include('result')
       h.should include('error')
     end
-    it 'fail' do
+    it 'error' do
       h = create_response(:error => nil).to_h
       h.should include('result')
       h.should_not include('error')

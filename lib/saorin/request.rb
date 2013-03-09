@@ -1,16 +1,22 @@
 require 'saorin'
 require 'saorin/error'
+require 'saorin/utility'
 require 'multi_json'
 
 module Saorin
   class Request
     attr_accessor :version, :method, :params, :id
 
-    def initialize(method, params, id = nil, version = Saorin::JSON_RPC_VERSION)
-      @version = version
+    def initialize(method, params, options = {})
+      @version = options[:version] || Saorin::JSON_RPC_VERSION
       @method = method
       @params = params
-      @id = id
+      @id = options[:id]
+      @notify = !options.has_key?(:id)
+    end
+
+    def notify?
+      @notify
     end
 
     def valid?
@@ -33,7 +39,7 @@ module Saorin
       h['jsonrpc'] = @version
       h['method'] = @method
       h['params'] = @params if @params && !@params.empty?
-      h['id'] = @id
+      h['id'] = @id unless notify?
       h
     end
 
@@ -42,9 +48,20 @@ module Saorin
       MultiJson.dump to_h, options
     end
 
+    def self.symbolized_keys(hash)
+      hash.each do |k, v|
+        if k.is_a? ::String
+          hash[k.to_sym] = v
+        end
+      end
+    end
+
     def self.from_hash(hash)
       raise Saorin::InvalidRequest unless hash.is_a?(::Hash)
-      new *hash.values_at('method', 'params', 'id', 'jsonrpc')
+      options = hash.dup
+      method = options.delete('method')
+      params = options.delete('params')
+      new method, params, Saorin::Utility.symbolized_keys(options)
     end
   end
 end

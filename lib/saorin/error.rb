@@ -5,15 +5,20 @@ module Saorin
   end
 
   class RPCError < Error
-    attr_reader :code
+    attr_reader :code, :data
 
-    def initialize(code, message)
-      @code = code
+    def initialize(message, options = {})
       super message
+      @code = options[:code]
+      @data = options[:data]
     end
 
     def to_h
-      {'code' => code, 'message' => message}
+      h = {}
+      h['code'] = code
+      h['message'] = message
+      h['data'] = data if data
+      h
     end
 
     def to_json(*args)
@@ -41,23 +46,29 @@ module Saorin
   JSON_RPC_ERRORS.each do |code, name, message|
     class_eval <<-EOS
       class #{name} < RPCError
-        def initialize
-          super #{code}, '#{message}'
+        def initialize(message = nil, options = {})
+          options[:code] = #{code}
+          super message || '#{message}', options
         end
       end
     EOS
   end
 
   class ServerError < RPCError
-    def initialize(e, code = -32000)
-      super code, e.to_s
+    def initialize(message, options = {})
+      options[:code] ||= -32000
+      super message, options
     end
   end
 
   class << self
     def code_to_error(code)
-      @map ||= Hash[JSON_RPC_ERRORS.map { |c, n, m| [c, const_get(n)] }]
-      @map[code]
+      if (-32099..-32000).include?(code)
+        ServerError
+      else
+        @map ||= Hash[JSON_RPC_ERRORS.map { |c, n, m| [c, const_get(n)] }]
+        @map[code]
+      end
     end
   end
 

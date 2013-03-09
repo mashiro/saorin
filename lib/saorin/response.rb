@@ -1,16 +1,17 @@
 require 'saorin'
 require 'saorin/error'
+require 'saorin/utility'
 require 'multi_json'
 
 module Saorin
   class Response
     attr_accessor :version, :result, :error, :id
 
-    def initialize(result, error, id = nil, version = Saorin::JSON_RPC_VERSION)
-      @version = version
-      @result = result
-      @error = error
-      @id = id
+    def initialize(options = {})
+      @version = options[:version] || Saorin::JSON_RPC_VERSION
+      @result = options[:result]
+      @error = options[:error]
+      @id = options[:id]
     end
 
     def error?
@@ -20,7 +21,7 @@ module Saorin
     def valid?
       return false unless !(@result && @error)
       return false unless [String].any? { |type| @version.is_a? type }
-      return false unless [String, NilClass].any? { |type| @result.is_a? type }
+      return false unless [Object].any? { |type| @result.is_a? type }
       return false unless [Saorin::Error, Hash, NilClass].any? { |type| @error.is_a? type }
       return false unless [String, Numeric, NilClass].any? { |type| @id.is_a? type }
       return false unless @version == JSON_RPC_VERSION
@@ -47,7 +48,7 @@ module Saorin
 
     def self.from_hash(hash)
       raise Saorin::InvalidResponse unless hash.is_a?(::Hash)
-      new *hash.values_at('result', 'error', 'id', 'jsonrpc')
+      new Saorin::Utility.symbolized_keys(hash)
     end
   end
 end

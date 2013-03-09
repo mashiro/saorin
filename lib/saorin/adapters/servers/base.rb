@@ -27,7 +27,7 @@ module Saorin
                          handle_request(request)
                        end
                      rescue Saorin::Error => e
-                       Response.new(nil, e)
+                       Response.new(:error => e)
                      end
 
           response && MultiJson.dump(response)
@@ -43,29 +43,30 @@ module Saorin
           begin
             request = Request.from_hash(hash)
             request.validate
-            result = dispatch_request request
-            response = Response.new(result, nil, request.id)
-            notify?(hash) ? nil : response
+            dispatch_request_with_trap_notification request
           rescue Saorin::InvalidRequest => e
-            Response.new(nil, e)
+            Response.new(:error => e)
           rescue Saorin::Error => e
-            Response.new(nil, e, request.id)
+            Response.new(:error => e, :id => request.id)
           rescue Exception => e
-            p e
-            Response.new(nil, Saorin::InternalError.new, request && request.id)
+            options = {:error => Saorin::InternalError.new}
+            options[:id] = request.id if request
+            Response.new(options)
           end
         end
 
-        def notify?(hash)
-          hash.is_a?(::Hash) && !hash.has_key?('id')
+        def dispatch_request_with_trap_notification(request)
+          result = dispatch_request request
+          Response.new(:result => result, :id => request.id)
+        ensure
+          return nil if request.notify?
         end
 
         def dispatch_request(request)
           method = request.method.to_s
           params = request.params || []
 
-          unless @allowed_methods.include?(method) &&
-            @handler.respond_to?(method)
+          unless @allowed_methods.include?(method) && @handler.respond_to?(method)
             raise Saorin::MethodNotFound
           end
 

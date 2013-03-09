@@ -9,7 +9,9 @@ describe Saorin::Request do
       :id => rand(1 << 31),
     }
     options = default_options.merge(options)
-    Saorin::Request.new *options.values_at(:method, :params, :id, :version)
+    method = options.delete(:method)
+    params = options.delete(:params)
+    Saorin::Request.new method, params, options
   end
 
   describe '#initialize' do

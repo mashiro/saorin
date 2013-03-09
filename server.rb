@@ -4,7 +4,7 @@ require 'saorin'
 
 class Handler
   def log(tag, time, record)
-    puts [tag, time, record]
+    p [tag, time, record]
     nil
   end
 end

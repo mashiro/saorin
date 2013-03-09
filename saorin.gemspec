@@ -20,4 +20,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'multi_json'
   gem.add_development_dependency 'rake'
   gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'rack'
+  gem.add_development_dependency 'reel'
+  gem.add_development_dependency 'faraday'
 end

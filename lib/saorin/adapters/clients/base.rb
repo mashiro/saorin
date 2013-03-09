@@ -12,25 +12,22 @@ module Saorin
         def initialize(options = {})
         end
 
-        def call_single(method, *args)
-          request = Saorin::Request.new method, args, seqid!
+        def call(method, *args)
+          apply Saorin::Request.new(method, args, :id => seqid!)
+        end
+
+        def notify(method, *args)
+          apply Saorin::Request.new(method, args)
+        end
+
+        def apply(request)
           response = send_request request.to_json
           content = process_response response
           raise content if content.is_a?(Saorin::RPCError)
           content
         end
 
-        alias_method :call, :call_single
-
-        def call_multi(*args)
-          requests = args.map do |arg|
-            request_args = arg.to_a.flatten
-            method = request_args.shift
-            Saorin::Request.new method, request_args, seqid!
-          end
-          response = send_request requests.to_json
-          process_response response
-        end
+        protected
 
         def send_request(content)
           raise NotImplementedError
@@ -39,11 +36,15 @@ module Saorin
         def process_response(content)
           response = parse_response content
           if response.is_a?(::Array)
-            response.map { |res| to_content handle_response(res) }
+            response.map { |res| handle_response res }
           else
-            to_content handle_response(response)
+            handle_response response
           end
+        rescue Saorin::InvalidResponse => e
+          raise e
         rescue => e
+          p e
+          print e.backtrace.join("\t\n")
           raise Saorin::InvalidResponse, e.to_s
         end
 
@@ -53,20 +54,23 @@ module Saorin
           raise Saorin::InvalidResponse, e.to_s
         end
 
-        def to_content(res)
-          if res.error?
-            code = res.error['code']
+        def to_content(response)
+          return nil if response.nil?
+          if response.error?
+            code, message, data = response.error.values_at('code', 'message', 'data')
             error_class = Saorin.code_to_error code
-            error_class.new
+            raise Error, 'unknown error code' unless error_class
+            error_class.new message, :code => code, :data => data
           else
-            res.result
+            response.result
           end
         end
 
         def handle_response(hash)
+          return nil if hash.nil?
           response = Response.from_hash(hash)
           response.validate
-          response
+          to_content response
         end
 
         def seqid
