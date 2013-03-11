@@ -27,7 +27,7 @@ module Saorin
 
       def shutdown
         if @server.server.respond_to?(:shutdown)
-          @server.server.shutdonw
+          @server.server.shutdown
         end
       end
 
