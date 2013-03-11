@@ -5,7 +5,7 @@ require 'saorin/server'
 
 module Saorin
   module Server
-    class Base
+    module Base
       attr_reader :handler, :allowed_methods
 
       def initialize(handler, options = {})

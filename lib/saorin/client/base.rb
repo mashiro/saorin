@@ -5,7 +5,7 @@ require 'saorin/client'
 
 module Saorin
   module Client
-    class Base
+    module Base
       CONTENT_TYPE = 'application/json'.freeze
 
       def initialize(options = {})

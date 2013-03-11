@@ -3,7 +3,9 @@ require 'faraday'
 
 module Saorin
   module Client
-    class Faraday < Base
+    class Faraday
+      include Base
+
       attr_reader :connection
 
       def initialize(options = {}, &block)

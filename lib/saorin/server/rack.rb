@@ -3,7 +3,9 @@ require 'rack'
 
 module Saorin
   module Server
-    class Rack < Base
+    class Rack
+      include Base
+
       DEFAULT_HEADERS = {
         'Content-Type' => 'application/json'
       }.freeze
