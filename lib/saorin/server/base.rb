@@ -16,6 +16,9 @@ module Saorin
         @options = options
       end
 
+      def shutdown
+      end
+
       def process_request(content)
         response = begin
                      request = parse_request content
