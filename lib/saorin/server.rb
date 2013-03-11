@@ -1,14 +1,16 @@
-require 'saorin/adapters/servers'
+require 'saorin/registerable'
 
 module Saorin
-  class Server
+  module Server
+    include Registerable
+    self.load_path = 'saorin/server'
+
     class << self
       def new(handler, options = {}, &block)
         adapter = options.delete(:adapter) || :rack
-        adapter_class = Saorin::Adapters::Servers.guess adapter
+        adapter_class = guess adapter
         adapter_class.new handler, options, &block
       end
-
       alias_method :start, :new
     end
   end
