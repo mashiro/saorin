@@ -7,11 +7,13 @@ module Saorin
   module Server
     module Base
       attr_reader :handler, :allowed_methods
+      attr_reader :options
 
       def initialize(handler, options = {})
         @handler = handler
         @allowed_methods = options[:allowed_methods] || handler.public_methods(false)
         @allowed_methods.map! { |m| m.to_s }
+        @options = options
       end
 
       def process_request(content)

@@ -6,12 +6,15 @@ module Saorin
     self.load_path = 'saorin/server'
 
     class << self
-      def new(handler, options = {}, &block)
+      def new(handler, options = {})
         adapter = options.delete(:adapter) || :rack
         adapter_class = guess adapter
-        adapter_class.new handler, options, &block
+        adapter_class.new handler, options
       end
-      alias_method :start, :new
+
+      def start(handler, options = {}, &block)
+        new(handler, options).start(&block)
+      end
     end
   end
 end

@@ -49,19 +49,20 @@ module Saorin
 
     def create_test_server(options = {})
       @pid = Process.fork do
-        @server = Saorin::Server.start(Handler.new, {
+        @server = Saorin::Server.new(Handler.new, {
           :host => HOST,
           :port => PORT,
           :Logger => Logger.new('/dev/null'),
           :AccessLog => [],
         }.merge(options))
+        @server.start
       end
-      sleep 3
+      sleep 2
     end
 
     def shutdown_test_server
       Process.kill :INT, @pid
-      sleep 3
+      sleep 2
     end
 
     def create_test_client(options = {})

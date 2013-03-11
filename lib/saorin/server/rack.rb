@@ -10,14 +10,25 @@ module Saorin
         'Content-Type' => 'application/json'
       }.freeze
 
-      def initialize(handler, options = {}, &block)
-        super handler, options
+      attr_reader :server
 
-        ::Rack::Server.start({
+      def initialize(handler, options = {})
+        super
+        @server = ::Rack::Server.new({
           :app => self,
           :Host => options[:host],
           :Port => options[:port],
-        }.merge(options))
+        }.merge(@options))
+      end
+
+      def start(&block)
+        @server.start &block
+      end
+
+      def shutdown
+        if @server.server.respond_to?(:shutdown)
+          @server.server.shutdonw
+        end
       end
 
       def call(env)
