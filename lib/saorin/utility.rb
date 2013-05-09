@@ -1,6 +1,10 @@
 module Saorin
   module Utility
     class << self
+      def extract_options!(args)
+        args.last.is_a?(::Hash) ? args.pop : {}
+      end
+
       def symbolized_keys(hash)
         hash = hash.dup
         hash.keys.each do |key|

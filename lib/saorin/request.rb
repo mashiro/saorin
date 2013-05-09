@@ -44,7 +44,7 @@ module Saorin
     end
 
     def to_json(*args)
-      options = args.last.is_a?(::Hash) ? args.pop : {}
+      options = Saorin::Utility.extract_options!(args)
       MultiJson.dump to_h, options
     end
 
