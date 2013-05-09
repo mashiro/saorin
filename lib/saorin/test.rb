@@ -61,7 +61,7 @@ module Saorin
     end
 
     def shutdown_test_server
-      Process.kill :INT, @pid
+      Process.kill :TERM, @pid
     end
 
     def create_test_client(options = {})
