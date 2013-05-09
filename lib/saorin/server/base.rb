@@ -2,6 +2,7 @@ require 'saorin/error'
 require 'saorin/request'
 require 'saorin/response'
 require 'saorin/server'
+require 'multi_json'
 
 module Saorin
   module Server
@@ -34,13 +35,17 @@ module Saorin
                      Response.new(:error => e)
                    end
 
-        response && MultiJson.dump(response)
+        dump_response response if response
       end
 
       def parse_request(content)
-        MultiJson.decode content
+        MultiJson.load content
       rescue MultiJson::LoadError
         raise Saorin::ParseError
+      end
+
+      def dump_response(response)
+        MultiJson.dump response
       end
 
       def handle_request(hash)

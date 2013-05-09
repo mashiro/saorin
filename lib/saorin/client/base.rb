@@ -21,7 +21,7 @@ module Saorin
       end
 
       def apply(request)
-        response = send_request request.to_json
+        response = send_request dump_request(request)
         content = process_response response
         raise content if content.is_a?(Saorin::RPCError)
         content
@@ -47,9 +47,13 @@ module Saorin
       end
 
       def parse_response(content)
-        MultiJson.decode content
+        MultiJson.load content
       rescue MultiJson::LoadError => e
         raise Saorin::InvalidResponse, e.to_s
+      end
+
+      def dump_request(request)
+        MultiJson.dump request
       end
 
       def to_content(response)
