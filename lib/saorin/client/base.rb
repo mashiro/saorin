@@ -1,7 +1,8 @@
-require 'multi_json'
 require 'saorin/request'
 require 'saorin/response'
 require 'saorin/client'
+require 'multi_json'
+require 'securerandom'
 
 module Saorin
   module Client
@@ -12,7 +13,7 @@ module Saorin
       end
 
       def call(method, *args)
-        apply Saorin::Request.new(method, args, :id => seqid!)
+        apply Saorin::Request.new(method, args, :id => uuid)
       end
 
       def notify(method, *args)
@@ -72,20 +73,8 @@ module Saorin
         to_content response
       end
 
-      def seqid
-        @@seqid ||= 0
-      end
-
-      def seqid=(value)
-        @@seqid = value
-        @@seqid = 0 if @@seqid >= (1 << 31)
-        @@seqid
-      end
-
-      def seqid!
-        id = self.seqid
-        self.seqid += 1
-        id
+      def uuid
+        SecureRandom.uuid
       end
     end
   end
