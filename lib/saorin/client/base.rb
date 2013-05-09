@@ -43,8 +43,6 @@ module Saorin
       rescue Saorin::InvalidResponse => e
         raise e
       rescue => e
-        p e
-        print e.backtrace.join("\t\n")
         raise Saorin::InvalidResponse, e.to_s
       end
 
