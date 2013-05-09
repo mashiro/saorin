@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ['mail@mashiro.org']
   gem.description   = %q{JSON-RPC 2.0 implementation}
   gem.summary       = %q{JSON-RPC 2.0 server and client implementation for any protocols}
-  gem.homepage      = ''
+  gem.homepage      = 'https://github.com/mashiro/saorin'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
