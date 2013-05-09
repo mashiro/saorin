@@ -1,15 +1,18 @@
+require 'saorin/error'
 require 'saorin/request'
 require 'saorin/response'
+require 'saorin/formatter'
 require 'saorin/client'
-require 'multi_json'
-require 'securerandom'
 
 module Saorin
   module Client
     module Base
-      CONTENT_TYPE = 'application/json'.freeze
+      include Formatter
+
+      attr_reader :options
 
       def initialize(options = {})
+        @options = options
       end
 
       def call(method, *args)
@@ -40,20 +43,16 @@ module Saorin
         else
           handle_response response
         end
-      rescue Saorin::InvalidResponse => e
-        raise e
       rescue => e
         raise Saorin::InvalidResponse, e.to_s
       end
 
       def parse_response(content)
-        MultiJson.load content
-      rescue MultiJson::LoadError => e
-        raise Saorin::InvalidResponse, e.to_s
+        formatter.load content
       end
 
       def dump_request(request)
-        MultiJson.dump request
+        formatter.dump request
       end
 
       def to_content(response)
@@ -76,6 +75,7 @@ module Saorin
       end
 
       def uuid
+        require 'securerandom'
         SecureRandom.uuid
       end
     end

@@ -1,12 +1,14 @@
 require 'saorin/error'
 require 'saorin/request'
 require 'saorin/response'
+require 'saorin/formatter'
 require 'saorin/server'
-require 'multi_json'
 
 module Saorin
   module Server
     module Base
+      include Formatter
+
       attr_reader :handler, :allowed_methods
       attr_reader :options
 
@@ -39,13 +41,13 @@ module Saorin
       end
 
       def parse_request(content)
-        MultiJson.load content
-      rescue MultiJson::LoadError
+        formatter.load content
+      rescue
         raise Saorin::ParseError
       end
 
       def dump_response(response)
-        MultiJson.dump response
+        formatter.dump response
       end
 
       def handle_request(hash)

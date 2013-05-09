@@ -6,6 +6,7 @@ module Saorin
     class Faraday
       include Base
 
+      CONTENT_TYPE = 'application/json'.freeze
       attr_reader :connection
 
       def initialize(options = {}, &block)

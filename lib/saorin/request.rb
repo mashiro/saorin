@@ -1,10 +1,12 @@
 require 'saorin'
 require 'saorin/error'
+require 'saorin/dumpable'
 require 'saorin/utility'
-require 'multi_json'
 
 module Saorin
   class Request
+    include Dumpable
+
     attr_accessor :version, :method, :params, :id
 
     def initialize(method, params, options = {})
@@ -41,11 +43,6 @@ module Saorin
       h['params'] = @params if @params && !@params.empty?
       h['id'] = @id unless notify?
       h
-    end
-
-    def to_json(*args)
-      options = Saorin::Utility.extract_options!(args)
-      MultiJson.dump to_h, options
     end
 
     def self.symbolized_keys(hash)

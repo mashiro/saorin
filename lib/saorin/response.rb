@@ -1,10 +1,12 @@
 require 'saorin'
 require 'saorin/error'
+require 'saorin/dumpable'
 require 'saorin/utility'
-require 'multi_json'
 
 module Saorin
   class Response
+    include Dumpable
+
     attr_accessor :version, :result, :error, :id
 
     def initialize(options = {})
@@ -39,11 +41,6 @@ module Saorin
       h['error'] = @error if error?
       h['id'] = id
       h
-    end
-
-    def to_json(*args)
-      options = Saorin::Utility.extract_options!(args)
-      MultiJson.dump to_h, options
     end
 
     def self.from_hash(hash)

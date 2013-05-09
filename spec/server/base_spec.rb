@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'saorin/server/base'
 
 describe Saorin::Server::Base do
   it_should_behave_like 'returning valid response' do

@@ -1,4 +1,5 @@
 require 'saorin/registerable'
+require 'saorin/client/base'
 
 module Saorin
   module Client

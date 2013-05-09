@@ -1,10 +1,12 @@
-require 'multi_json'
+require 'saorin/dumpable'
 
 module Saorin
   class Error < StandardError
   end
 
   class RPCError < Error
+    include Dumpable
+
     attr_reader :code, :data
 
     def initialize(message, options = {})
@@ -19,11 +21,6 @@ module Saorin
       h['message'] = message
       h['data'] = data if data
       h
-    end
-
-    def to_json(*args)
-      options = Saorin::Utility.extract_options!(args)
-      MultiJson.dump to_h, options
     end
   end
 

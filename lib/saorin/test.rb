@@ -80,8 +80,8 @@ module Saorin
 
     shared_context 'setup rpc server client' do |options|
       before(:all) do
-        create_test_server :adapter => options[:server]
-        create_test_client :adapter => options[:client]
+        create_test_server options[:server] || {}
+        create_test_client options[:client] || {}
       end
       after(:all) do
         shutdown_test_server

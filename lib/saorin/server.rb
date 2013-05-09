@@ -1,4 +1,5 @@
 require 'saorin/registerable'
+require 'saorin/server/base'
 
 module Saorin
   module Server
