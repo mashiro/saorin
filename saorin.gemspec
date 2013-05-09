@@ -1,25 +1,26 @@
-# -*- encoding: utf-8 -*-
+# coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'saorin/version'
 
-Gem::Specification.new do |gem|
-  gem.name          = 'saorin'
-  gem.version       = Saorin::VERSION
-  gem.authors       = ['mashiro']
-  gem.email         = ['mail@mashiro.org']
-  gem.description   = %q{JSON-RPC 2.0 implementation}
-  gem.summary       = %q{JSON-RPC 2.0 server and client implementation for any protocols}
-  gem.homepage      = 'https://github.com/mashiro/saorin'
+Gem::Specification.new do |spec|
+  spec.name          = 'saorin'
+  spec.version       = Saorin::VERSION
+  spec.authors       = ['mashiro']
+  spec.email         = ['mail@mashiro.org']
+  spec.description   = %q{JSON-RPC 2.0 implementation}
+  spec.summary       = %q{JSON-RPC 2.0 server and client implementation for any protocols}
+  spec.homepage      = 'https://github.com/mashiro/saorin'
+  spec.license       = 'MIT'
 
-  gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.require_paths = ['lib']
+  spec.files         = `git ls-files`.split($/)
+  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.require_paths = ['lib']
 
-  gem.add_dependency 'multi_json'
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'rspec'
-  gem.add_development_dependency 'rack'
-  gem.add_development_dependency 'faraday'
+  spec.add_dependency 'multi_json'
+  spec.add_development_dependency 'rake'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rack'
+  spec.add_development_dependency 'faraday'
 end
