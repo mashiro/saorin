@@ -57,12 +57,11 @@ module Saorin
         }.merge(options))
         @server.start
       end
-      sleep 2
+      sleep 1
     end
 
     def shutdown_test_server
       Process.kill :INT, @pid
-      sleep 2
     end
 
     def create_test_client(options = {})
@@ -79,19 +78,17 @@ module Saorin
       @client.notify *args
     end
 
-    shared_context 'setup rpc server client' do
-      let(:server_adapter) {}
-      let(:client_adapter) {}
+    shared_context 'setup rpc server client' do |options|
       before(:all) do
-        create_test_server :adapter => server_adapter
-        create_test_client :adapter => client_adapter
+        create_test_server :adapter => options[:server]
+        create_test_client :adapter => options[:client]
       end
       after(:all) do
         shutdown_test_server
       end
     end
 
-    shared_examples 'rpc server client' do
+    shared_examples 'rpc communicatable' do
       it 'string' do
         value = '123'
         test_call('identity', value).should eq value

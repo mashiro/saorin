@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'saorin/server/base'
 
 describe Saorin::Server::Base do
-  it_should_behave_like 'rpc call' do
+  it_should_behave_like 'returning valid response' do
     let(:process) do
       handler = Saorin::Test::Handler.new
       class VanillaServer
@@ -10,7 +10,8 @@ describe Saorin::Server::Base do
       end
       server = VanillaServer.new handler
       proc do |input|
-        server.process_request input
+        data = server.process_request input
+        data && JSON.load(data)
       end
     end
   end

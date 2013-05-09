@@ -1,5 +1,4 @@
 require 'support/utils'
-require 'json'
 
 shared_examples 'rpc call with positional parameters' do
   it 'rpc call with positional parameters' do
@@ -142,7 +141,7 @@ shared_examples 'rpc call Batch (all notifications)' do
   end
 end
 
-shared_examples 'rpc call' do
+shared_examples 'returning valid response' do
   let(:inputs) { [] }
   let(:answers) { [] }
   include_examples 'rpc call with positional parameters'
