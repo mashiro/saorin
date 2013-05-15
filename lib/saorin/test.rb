@@ -93,7 +93,7 @@ module Saorin
     end
 
     shared_examples 'rpc communicatable' do
-      context 'call' do
+      describe '#call' do
         it 'string' do
           v = '123'
           expect(test_call('identity', v)).to eq v
@@ -128,7 +128,7 @@ module Saorin
         end
       end
 
-      context 'notify' do
+      describe '#notify' do
         it 'string' do
           v = '123'
           expect(test_notify('identity', v)).to eq nil
@@ -143,14 +143,20 @@ module Saorin
         end
       end
 
-      context 'batch' do
+      describe '#batch' do
         it 'batch call' do
           b = test_batch
           b.call 'identity', 1
           b.call 'identity', '2'
           b.call 'identity', [3]
           b.call 'xxx'
-          expect(b.apply).to eq [1, '2', [3], MethodNotFound]
+
+          ret = b.apply
+          expect(ret).to have(4).items
+          expect(ret[0]).to eq 1
+          expect(ret[1]).to eq '2'
+          expect(ret[2]).to eq [3]
+          expect(ret[3]).to be_instance_of MethodNotFound
         end
 
         it 'batch call with notify' do
@@ -159,7 +165,11 @@ module Saorin
           b.notify 'identity', '2'
           b.call 'identity', [3]
           b.notify 'xxx'
-          expect(b.apply).to eq [1, [3]]
+
+          ret = b.apply
+          expect(ret).to have(2).items
+          expect(ret[0]).to eq 1
+          expect(ret[1]).to eq [3]
         end
 
         it 'all notify' do
@@ -168,12 +178,16 @@ module Saorin
           b.notify 'identity', '2'
           b.notify 'identity', [3]
           b.notify 'xxx'
-          expect(b.apply).to eq []
+
+          ret = b.apply
+          expect(ret).to have(0).items
         end
 
         it 'empty' do
           b = test_batch
-          expect(b.apply).to eq []
+
+          ret = b.apply
+          expect(ret).to have(0).items
         end
       end
     end
