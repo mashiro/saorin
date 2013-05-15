@@ -8,7 +8,7 @@ module Saorin
 
     class << self
       def new(options = {}, &block)
-        adapter = options.delete(:adapter) || :faraday
+        adapter = options[:adapter] || :faraday
         adapter_class = guess adapter
         adapter_class.new options, &block
       end

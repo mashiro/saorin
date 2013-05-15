@@ -8,7 +8,7 @@ module Saorin
 
     class << self
       def new(handler, options = {})
-        adapter = options.delete(:adapter) || :rack
+        adapter = options[:adapter] || :rack
         adapter_class = guess adapter
         adapter_class.new handler, options
       end
