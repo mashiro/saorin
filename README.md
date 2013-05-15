@@ -1,4 +1,4 @@
-# Saorin
+# Saorin [![Build Status](https://travis-ci.org/mashiro/saorin.png?branch=master)](https://travis-ci.org/mashiro/saorin)
 
 JSON-RPC server and client library.
 
