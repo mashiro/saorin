@@ -7,6 +7,14 @@ require 'saorin/client'
 module Saorin
   module Client
     module Base
+      module UUID
+        def uuid
+          require 'securerandom'
+          SecureRandom.uuid
+        end
+      end
+
+      include UUID
       include Formatter
 
       attr_reader :options
@@ -30,6 +38,33 @@ module Saorin
         content
       end
 
+      class Batch < ::Array
+        include UUID
+        attr_reader :client
+
+        def initialize(client)
+          super()
+          @client = client
+        end
+
+        def call(method, *args)
+          push Saorin::Request.new(method, args, :id => uuid)
+        end
+
+        def notify(method, *args)
+          push Saorin::Request.new(method, args)
+        end
+
+        def apply
+          return [] if empty?
+          @client.apply(self) || []
+        end
+      end
+
+      def batch
+        Batch.new self
+      end
+
       protected
 
       def send_request(content)
@@ -48,6 +83,7 @@ module Saorin
       end
 
       def parse_response(content)
+        return nil if content.nil? || content.empty?
         formatter.load content
       end
 
@@ -72,11 +108,6 @@ module Saorin
         response = Response.from_hash(hash)
         response.validate
         to_content response
-      end
-
-      def uuid
-        require 'securerandom'
-        SecureRandom.uuid
       end
     end
   end

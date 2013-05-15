@@ -78,6 +78,10 @@ module Saorin
       @client.notify *args
     end
 
+    def test_batch
+      @client.batch
+    end
+
     shared_context 'setup rpc server client' do |options|
       before(:all) do
         create_test_server options[:server] || {}
@@ -89,37 +93,88 @@ module Saorin
     end
 
     shared_examples 'rpc communicatable' do
-      it 'string' do
-        value = '123'
-        test_call('identity', value).should eq value
+      context 'call' do
+        it 'string' do
+          v = '123'
+          expect(test_call('identity', v)).to eq v
+        end
+
+        it 'number' do
+          v = 123
+          expect(test_call('identity', v)).to eq v
+        end
+
+        it 'array' do
+          v = [1, 2, 3]
+          expect(test_call('identity', v)).to eq v
+        end
+
+        it 'hash' do
+          v = {'foo' => 1, 'bar' => 2}
+          expect(test_call('identity', v)).to eq v
+        end
+
+        it 'nil' do
+          v = nil
+          expect(test_call('identity', v)).to eq v
+        end
+
+        it 'not found' do
+          expect { test_call('xx') }.to raise_error MethodNotFound
+        end
+
+        it 'invalid params' do
+          expect { test_call('identity', 1, 2, 3, 4, 5) }.to raise_error InvalidParams
+        end
       end
 
-      it 'number' do
-        value = 123
-        test_call('identity', value).should eq value
+      context 'notify' do
+        it 'string' do
+          v = '123'
+          expect(test_notify('identity', v)).to eq nil
+        end
+
+        it 'not found' do
+          expect(test_notify('xxx')).to eq nil
+        end
+
+        it 'invalid params' do
+          expect(test_notify('identity', 1, 2, 3, 4, 5)).to eq nil
+        end
       end
 
-      it 'array' do
-        value = [1, 2, 3]
-        test_call('identity', value).should eq value
-      end
+      context 'batch' do
+        it 'batch call' do
+          b = test_batch
+          b.call 'identity', 1
+          b.call 'identity', '2'
+          b.call 'identity', [3]
+          b.call 'xxx'
+          expect(b.apply).to eq [1, '2', [3], MethodNotFound]
+        end
 
-      it 'hash' do
-        value = {'foo' => 1, 'bar' => 2}
-        test_call('identity', value).should eq value
-      end
+        it 'batch call with notify' do
+          b = test_batch
+          b.call 'identity', 1
+          b.notify 'identity', '2'
+          b.call 'identity', [3]
+          b.notify 'xxx'
+          expect(b.apply).to eq [1, [3]]
+        end
 
-      it 'nil' do
-        value = nil
-        test_call('identity', value).should eq value
-      end
+        it 'all notify' do
+          b = test_batch
+          b.notify 'identity', 1
+          b.notify 'identity', '2'
+          b.notify 'identity', [3]
+          b.notify 'xxx'
+          expect(b.apply).to eq []
+        end
 
-      it 'not found' do
-        lambda { test_call('xxx') }.should raise_error MethodNotFound
-      end
-
-      it 'invalid params' do
-        lambda { test_call('identity', 1, 2, 3, 4, 5) }.should raise_error InvalidParams
+        it 'empty' do
+          b = test_batch
+          expect(b.apply).to eq []
+        end
       end
     end
   end
