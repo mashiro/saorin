@@ -58,13 +58,19 @@ module Saorin
     end
   end
 
+  class UserDefinedError < RPCError
+  end
+
   class << self
     def code_to_error(code)
-      if (-32099..-32000).include?(code)
+      case code
+      when nil
+        nil
+      when (-32099..-32000)
         ServerError
       else
-        @map ||= Hash[JSON_RPC_ERRORS.map { |c, n, m| [c, const_get(n)] }]
-        @map[code]
+        @error_code_map ||= Hash[JSON_RPC_ERRORS.map { |c, n, m| [c, const_get(n)] }]
+        @error_code_map[code] || UserDefinedError
       end
     end
   end

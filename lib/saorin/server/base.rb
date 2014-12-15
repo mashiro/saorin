@@ -87,6 +87,8 @@ module Saorin
           else
             @handler.__send__ method, *params
           end
+        rescue Saorin::RPCError
+          raise
         rescue ArgumentError
           raise Saorin::InvalidParams
         rescue Exception => e
