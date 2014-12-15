@@ -58,7 +58,7 @@ describe Saorin::Request do
       it do
         r = create_request
         r.stub(:valid?).and_return(true)
-        lambda { r.validate }.should_not raise_error Saorin::InvalidRequest
+        lambda { r.validate }.should_not raise_error
       end
     end
 

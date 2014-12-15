@@ -82,7 +82,7 @@ describe Saorin::Response do
       it do
         r = create_response
         r.stub(:valid?).and_return(true)
-        lambda { r.validate }.should_not raise_error Saorin::InvalidResponse
+        lambda { r.validate }.should_not raise_error
       end
     end
 
