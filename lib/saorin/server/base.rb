@@ -2,7 +2,6 @@ require 'saorin/error'
 require 'saorin/request'
 require 'saorin/response'
 require 'saorin/formatter'
-require 'saorin/server'
 
 module Saorin
   module Server
