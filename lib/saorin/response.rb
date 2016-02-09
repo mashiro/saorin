@@ -1,4 +1,3 @@
-require 'saorin'
 require 'saorin/error'
 require 'saorin/dumpable'
 require 'saorin/utility'
