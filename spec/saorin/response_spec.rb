@@ -20,7 +20,7 @@ describe Saorin::Response do
       its(:result) { should eq '123' }
       its(:error) { should be_nil }
       its(:id) { should eq 123 }
-      its(:error?) { should be_false }
+      its(:error?) { should be_falsey }
     end
 
     context 'error' do
@@ -33,7 +33,7 @@ describe Saorin::Response do
       its(:result) { should be_nil }
       its(:error) { should eq @e }
       its(:id) { should eq 123 }
-      its(:error?) { should be_true }
+      its(:error?) { should be_truthy }
     end
   end
 
