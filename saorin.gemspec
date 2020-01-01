@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-its', '~> 1.3.0'
   spec.add_development_dependency 'rspec-collection_matchers', '~> 1.2.0'
   spec.add_development_dependency 'rack', '~> 2.0.8'
-  spec.add_development_dependency 'faraday', '~> 0.17.1'
+  spec.add_development_dependency 'faraday', '~> 1.0.0'
 end
